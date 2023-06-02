@@ -11,6 +11,30 @@ class UserModel {
   final Map<String, Timestamp> upvotedPrompts;
   final Map<String, Timestamp> downvotedPrompts;
 
+  UserModel copyWith({
+    String? userId,
+    String? username,
+    String? profilePic,
+    String? description,
+    bool? isRestricted,
+    List<String>? favPrompts,
+    List<String>? createdPrompts,
+    Map<String, Timestamp>? upvotedPrompts,
+    Map<String, Timestamp>? downvotedPrompts,
+  }) {
+    return UserModel(
+      userId: userId ?? this.userId,
+      username: username ?? this.username,
+      profilePic: profilePic ?? this.profilePic,
+      description: description ?? this.description,
+      isRestricted: isRestricted ?? this.isRestricted,
+      favPrompts: favPrompts ?? this.favPrompts,
+      createdPrompts: createdPrompts ?? this.createdPrompts,
+      upvotedPrompts: upvotedPrompts ?? this.upvotedPrompts,
+      downvotedPrompts: downvotedPrompts ?? this.downvotedPrompts,
+    );
+  }
+
   UserModel({
     required this.userId,
     required this.username,
@@ -23,23 +47,23 @@ class UserModel {
     required this.downvotedPrompts,
   });
 
-  factory UserModel.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromDocumentSnapshot(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return UserModel(
-      userId: map['user_id'],
-      username: map['username'],
-      profilePic: map['profile_pic'],
-      description: map['description'],
-      isRestricted: map['is_restricted'],
-      favPrompts: List<String>.from(map['fav_prompts']),
-      createdPrompts: List<String>.from(map['created_prompts']),
-      upvotedPrompts: Map<String, Timestamp>.from(map['upvoted_prompts']),
-      downvotedPrompts: Map<String, Timestamp>.from(map['downvoted_prompts']),
+      userId: doc.id,
+      username: data['username'],
+      profilePic: data['profile_pic'],
+      description: data['description'],
+      isRestricted: data['is_restricted'],
+      favPrompts: List<String>.from(data['fav_prompts']),
+      createdPrompts: List<String>.from(data['created_prompts']),
+      upvotedPrompts: Map<String, Timestamp>.from(data['upvoted_prompts']),
+      downvotedPrompts: Map<String, Timestamp>.from(data['downvoted_prompts']),
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toDocument() {
     return {
-      'user_id': userId,
       'username': username,
       'profile_pic': profilePic,
       'description': description,

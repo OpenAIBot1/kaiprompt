@@ -14,6 +14,10 @@ class AuthService extends StateNotifier<User?> {
     });
   }
 
+  User? getCurrentUser() {
+    return state;
+  }
+
   Future<void> signIn(String email, String password) async {
     await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
