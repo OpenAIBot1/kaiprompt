@@ -5,7 +5,7 @@ import 'package:kaiprompt/services/auth_service.dart';
 import 'package:kaiprompt/services/user_service.dart';
 
 final userProvider = StateNotifierProvider<UserProvider, UserModel?>((ref) {
-  final authService = ref.watch(authServiceProvider.notifier);
+  final authService = ref.read(authServiceProvider.notifier);
   final userId = authService.getCurrentUser()?.uid ?? '';
   return UserProvider(userId: userId);
 });

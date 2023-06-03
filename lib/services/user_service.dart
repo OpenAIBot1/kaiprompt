@@ -1,13 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kaiprompt/models/user.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class UserService {
   final CollectionReference _usersRef =
       FirebaseFirestore.instance.collection('Users');
 
   Future<UserModel> getUser(String userId) async {
-    DocumentSnapshot doc = await _usersRef.doc(userId).get();
-    return UserModel.fromDocumentSnapshot(doc);
+    try {
+      DocumentSnapshot doc = await _usersRef.doc(userId).get();
+      if (doc.exists) {
+        return UserModel.fromDocumentSnapshot(doc);
+      } else {
+        throw Exception('User not found');
+      }
+    } catch (e) {
+      logger.e('Failed to get user: $e');
+      rethrow;
+    }
   }
 
   Future<void> createUser(UserModel user) async {
@@ -15,8 +27,13 @@ class UserService {
   }
 
   Future<void> updateUser(UserModel user) async {
+  try {
     await _usersRef.doc(user.userId).update(user.toDocument());
+  } catch (e) {
+    logger.e('Failed to update user: $e');
+    rethrow;
   }
+}
 
   Future<void> deleteUser(String userId) async {
     await _usersRef.doc(userId).delete();
