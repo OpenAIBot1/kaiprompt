@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "450155696339",
+    "project_id": "kaipromptv1",
+    "storage_bucket": "kaipromptv1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:450155696339:android:26ef44f8aa1db492b10426",
+        "android_client_info": {
+          "package_name": "com.example.kaiprompt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "450155696339-3ndnkbg6i4c7smq6c8pkgt411mbs1rgk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG5Cx6TfAOTYmKu3embv1z703J-xjxuGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "450155696339-3ndnkbg6i4c7smq6c8pkgt411mbs1rgk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

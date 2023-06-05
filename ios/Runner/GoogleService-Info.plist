@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>450155696339-aii47cgn3dklr3ma02rek2harb4e0qfa.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.450155696339-aii47cgn3dklr3ma02rek2harb4e0qfa</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBz6TOz2ecfOYubFU9mMO-HE5mfd7ndLHc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>450155696339</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.kaiprompt</string>
+	<key>PROJECT_ID</key>
+	<string>kaipromptv1</string>
+	<key>STORAGE_BUCKET</key>
+	<string>kaipromptv1.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:450155696339:ios:e9554d43ff4e7b61b10426</string>
+</dict>
+</plist>
