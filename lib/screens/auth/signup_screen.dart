@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:fluro/fluro.dart';
+// import 'package:flutter_hooks/flutter_hooks.dart';
+// import 'package:fluro/fluro.dart';
 import 'package:kaiprompt/config/routes.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -57,6 +57,10 @@ class SignupScreen extends HookConsumerWidget {
                       _emailController.text, _passwordController.text);
                   if (success) {
                     logger.i("User registered");
+                    Future.delayed(Duration.zero, () {
+                      router.navigateTo(context, "/home/catalogue",
+                          replace: true, clearStack: true);
+                    });
                   } else {
                     logger.e("Failed to register");
                     // Display error message to the user
