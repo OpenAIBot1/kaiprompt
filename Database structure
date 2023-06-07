@@ -1,6 +1,6 @@
-**Collections:**
+Collections:
 
-1. **Users**
+1. Users
     - user_id (String)
     - username (String)
     - profile_pic (String: URL)
@@ -10,7 +10,7 @@
     - created_prompts (Array of Strings: prompt_ids)
     - upvoted_prompts (Map: prompt_id as key, Timestamp as value)
     - downvoted_prompts (Map: prompt_id as key, Timestamp as value)
-2. **Prompts**
+2. Prompts
     - prompt_id (String)
     - title (String)
     - tags (Array of Strings)
@@ -20,7 +20,7 @@
     - upvotes (Map: user_id as key, Timestamp as value)
     - downvotes (Map: user_id as key, Timestamp as value)
     - favs (Map: user_id as key, Timestamp as value)
-3. **Versions**
+3. Versions
     - version_id (String)
     - prompt_id (String)
     - text_parts (Array of Maps: each map has "text" as key and "position" as value)
