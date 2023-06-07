@@ -1,0 +1,9 @@
+1. Project Purpose: The project is a Flutter/Firebase web application designed to allow users to create, edit, share, and interact with prompts. It also includes user profile management and support features.
+2. User Interface: The application consists of various screens categorized into standard screens, screens with content requirements, screens requiring detailed description, and a dropdown menu for quick navigation.
+3. User Management: Users can create an account, log in, and manage their profiles. Special accounts have additional functionalities like banning/unbanning users and hiding/deleting prompts.
+4. Prompt Management: Users can create, edit, publish, upvote/downvote, save, share, and report prompts. They can also view prompt details, including versions, remixes, and variables.
+5. Support and Contact: Users can support the development of the application through links provided in the Support Main Screen. They can also contact the team through a contact form.
+6. Database Structure: The application uses Firebase as its backend, with collections for Users, Prompts, and Versions. Each collection has specific fields to store relevant data.
+7. Security and Privacy: The application includes features for password reset and privacy settings. Special accounts can mark users as shadowbanned and prompts as hidden.
+8. Technology Stack: The application is built using Flutter for the frontend and Firebase for the backend. It uses hooks_riverpod for state management, fluro for routing
+9. Design Style: The design style is modern and clean, with a black and white color scheme and color indications for specific actions. Lato font
