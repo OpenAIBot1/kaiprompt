@@ -9,12 +9,14 @@ import 'package:kaiprompt/screens/home/loading_screen.dart';
 import 'package:kaiprompt/screens/auth/login_screen.dart';
 import 'package:kaiprompt/screens/error/error_screen.dart';
 import 'firebase_options.dart';
+import 'config/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  defineRoutes(router);
   runApp(
     ProviderScope(
       child: MyApp(),
