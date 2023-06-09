@@ -21,7 +21,7 @@ Collections:
     - upvotes (Map: user_id as key, Timestamp as value)
     - downvotes (Map: user_id as key, Timestamp as value)
     - favs (Map: user_id as key, Timestamp as value)
-    - remixes (Map prompt_id as key, Timestamp as value)
+    - remixes (Array of Strings: prompt_ids)
     - base_prompt (prompt_id, if this is a remix, null otherwise)
 3. Versions
     - version_id (String)
