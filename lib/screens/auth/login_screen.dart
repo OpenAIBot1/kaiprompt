@@ -63,12 +63,27 @@ class LoginScreen extends HookConsumerWidget {
                     });
                   } else {
                     logger.e("Failed to sign in");
+                    //TODO: Display pop up with the error to the user
+                  }
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                child: Text("Sign In with Google"),
+                onPressed: () async {
+                  bool success = await auth.signInWithGoogle();
+                  if (success) {
+                    logger.i("User signed in with Google");
+                    Future.delayed(Duration.zero, () {
+                      router.navigateTo(context, "/home/catalogue",
+                          replace: true, clearStack: true);
+                    });
+                  } else {
+                    logger.e("Failed to sign in with Google");
                     // Display error message to the user
                   }
                 },
               ),
-              // Google Sign In button
-              // Implement Google Sign In button
               // Navigation to other screens
               TextButton(
                 child: Text("Sign Up"),

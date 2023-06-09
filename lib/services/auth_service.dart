@@ -2,10 +2,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logger/logger.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 final logger = Logger();
 final _firestore = FirebaseFirestore.instance;
 final _usersCollection = _firestore.collection('users');
+final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 // Declare the provider
 final authServiceProvider = StateNotifierProvider<AuthService, User?>(
@@ -83,6 +85,29 @@ class AuthService extends StateNotifier<User?> {
       return true;
     } catch (e) {
       // TODO: handle exception
+      logger.e(e);
+      return false;
+    }
+  }
+
+  Future<bool> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return false; // User aborted the sign-in process
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await _firebaseAuth.signInWithCredential(credential);
+      return true;
+    } catch (e) {
       logger.e(e);
       return false;
     }

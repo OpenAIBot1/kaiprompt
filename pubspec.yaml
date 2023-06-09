@@ -37,7 +37,7 @@ dependencies:
   hooks_riverpod: ^2.3.6
   firebase_auth: ^4.6.1
   logger: ^1.3.0
-  google_sign_in: ^6.1.0
+  google_sign_in: ^6.1.4
   fluro: ^2.0.5
   responsive_framework: ^1.0.0
   cloud_firestore: ^4.8.0
