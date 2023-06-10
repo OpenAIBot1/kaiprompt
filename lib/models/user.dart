@@ -77,3 +77,40 @@ class UserModel {
     };
   }
 }
+
+class UserState {
+  final UserModel? user;
+  final String? errorMessage;
+
+  UserState copyWith({
+    String? userId,
+    String? username,
+    String? profilePic,
+    String? description,
+    bool? isRestricted,
+    List<String>? favPrompts,
+    List<String>? createdPrompts,
+    Map<String, Timestamp>? upvotedPrompts,
+    Map<String, Timestamp>? downvotedPrompts,
+    String? errorMessage,
+  }) {
+    return UserState(
+      user: user == null
+          ? this.user
+          : this.user!.copyWith(
+                userId: userId,
+                username: username,
+                profilePic: profilePic,
+                description: description,
+                isRestricted: isRestricted,
+                favPrompts: favPrompts,
+                createdPrompts: createdPrompts,
+                upvotedPrompts: upvotedPrompts,
+                downvotedPrompts: downvotedPrompts,
+              ),
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
+
+  UserState({this.user, this.errorMessage});
+}

@@ -43,9 +43,9 @@ class HomeScreenWrapper extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final UserModel? userState = ref.watch(userProvider);
+    final UserState userState = ref.watch(userProvider);
 
-    if (userState == null) {
+    if (userState.user == null) {
       return LoginScreen();
     } else {
       return CatalogueMainScreen();

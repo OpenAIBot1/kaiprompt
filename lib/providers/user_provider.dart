@@ -4,43 +4,48 @@ import 'package:kaiprompt/models/user.dart';
 import 'package:kaiprompt/services/auth_service.dart';
 import 'package:kaiprompt/services/user_service.dart';
 
-final userProvider = StateNotifierProvider<UserProvider, UserModel?>((ref) {
+final userProvider = StateNotifierProvider<UserProvider, UserState>((ref) {
   final authService = ref.read(authServiceProvider.notifier);
   final userId = authService.getCurrentUser()?.uid ?? '';
   return UserProvider(userId: userId);
 });
 
-class UserProvider extends StateNotifier<UserModel?> {
+class UserProvider extends StateNotifier<UserState> {
   final String userId;
   final UserService _userService = UserService();
 
-  UserProvider({required this.userId}) : super(null) {
+  UserProvider({required this.userId}) : super(UserState()) {
     _loadUserData();
   }
 
   Future<void> _loadUserData() async {
     if (userId.isNotEmpty) {
-      final user = await _userService.getUser(userId);
-      state = user;
+      final response = await _userService.getUser(userId);
+      if (response.error != null) {
+        state = UserState(errorMessage: response.error);
+      } else {
+        state = UserState(user: response.data);
+      }
     }
   }
 
   void upvotePrompt(String promptId) {
-    if (state != null) {
-      state = state!.copyWith(
+    if (state.errorMessage == null) {
+      state = state.copyWith(
         upvotedPrompts: {
-          ...state!.upvotedPrompts,
+          ...state.user!.upvotedPrompts,
           promptId: Timestamp.now(),
         },
       );
+      saveChanges();
     }
   }
 
   void downvotePrompt(String promptId) {
-    if (state != null) {
-      state = state!.copyWith(
+    if (state.errorMessage == null) {
+      state = state.copyWith(
         downvotedPrompts: {
-          ...state!.downvotedPrompts,
+          ...state.user!.downvotedPrompts,
           promptId: Timestamp.now(),
         },
       );
@@ -48,48 +53,54 @@ class UserProvider extends StateNotifier<UserModel?> {
   }
 
   void removeUpvote(String promptId) {
-    if (state != null) {
-      Map<String, Timestamp> updatedUpvotes = Map.of(state!.upvotedPrompts);
+    if (state.errorMessage == null) {
+      Map<String, Timestamp> updatedUpvotes =
+          Map.of(state.user!.upvotedPrompts);
       updatedUpvotes.remove(promptId);
-      state = state!.copyWith(
+      state = state.copyWith(
         upvotedPrompts: updatedUpvotes,
       );
     }
   }
 
   void removeDownvote(String promptId) {
-    if (state != null) {
-      Map<String, Timestamp> updatedDownvotes = Map.of(state!.downvotedPrompts);
+    if (state.errorMessage == null) {
+      Map<String, Timestamp> updatedDownvotes =
+          Map.of(state.user!.downvotedPrompts);
       updatedDownvotes.remove(promptId);
-      state = state!.copyWith(
+      state = state.copyWith(
         downvotedPrompts: updatedDownvotes,
       );
     }
   }
 
   void addFavouritePrompt(String promptId) {
-    if (state != null) {
-      List<String> updatedFavPrompts = List.of(state!.favPrompts);
+    if (state.errorMessage == null) {
+      List<String> updatedFavPrompts = List.of(state.user!.favPrompts);
       updatedFavPrompts.add(promptId);
-      state = state!.copyWith(
+      state = state.copyWith(
         favPrompts: updatedFavPrompts,
       );
     }
   }
 
   void removeFavouritePrompt(String promptId) {
-    if (state != null) {
-      List<String> updatedFavPrompts = List.of(state!.favPrompts);
+    if (state.errorMessage == null) {
+      List<String> updatedFavPrompts = List.of(state.user!.favPrompts);
       updatedFavPrompts.remove(promptId);
-      state = state!.copyWith(
+      state = state.copyWith(
         favPrompts: updatedFavPrompts,
       );
     }
   }
 
   Future<void> saveChanges() async {
-    if (state != null) {
-      await _userService.updateUser(state!);
+    if (state.errorMessage == null) {
+      final response = await _userService.updateUser(state.user!);
+      if (response.error != null) {
+        // Handle the error
+        logger.e('Error while saving changes: ${response.error}');
+      }
     }
   }
 }
