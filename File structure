@@ -40,6 +40,7 @@
       version_service.dart
     /widgets
       reusable_components.dart
+      prompt_card.dart
     /providers
       user_provider.dart
       prompt_provider.dart
