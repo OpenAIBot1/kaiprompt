@@ -27,5 +27,5 @@ Collections:
     - version_id (String)
     - prompt_id (String)
     - created_at (Timestamp)
-    - text_parts (Array of Maps: each map has "text" as key and "position" as value)
-    - variables (Array of Maps: each map has "variable_type", "variable_name", "default_value", "prompt_position", "ui_position", and optionally "description", "range" or "hidden_text" as keys)
+    - text_parts (Array of Maps: each map has "position" as key and "text" as value)
+    - variables (Json String: "variable_type", "variable_name", "default_value", "prompt_position", "ui_position", and optionally "description", "range" or "hidden_text" as keys)
