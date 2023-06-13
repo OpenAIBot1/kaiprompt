@@ -12,6 +12,7 @@ class UserModel {
   final List<String> createdPrompts;
   final Map<String, Timestamp> upvotedPrompts;
   final Map<String, Timestamp> downvotedPrompts;
+  final Timestamp createdAt; // new field
 
   UserModel copyWith({
     String? userId,
@@ -23,6 +24,7 @@ class UserModel {
     List<String>? createdPrompts,
     Map<String, Timestamp>? upvotedPrompts,
     Map<String, Timestamp>? downvotedPrompts,
+    Timestamp? createdAt, // new parameter
   }) {
     return UserModel(
       userId: userId ?? this.userId,
@@ -34,10 +36,11 @@ class UserModel {
       createdPrompts: createdPrompts ?? this.createdPrompts,
       upvotedPrompts: upvotedPrompts ?? this.upvotedPrompts,
       downvotedPrompts: downvotedPrompts ?? this.downvotedPrompts,
+      createdAt: createdAt ?? this.createdAt, // new field assignment
     );
   }
 
-  UserModel({
+  const UserModel({
     required this.userId,
     required this.username,
     required this.profilePic,
@@ -47,6 +50,7 @@ class UserModel {
     required this.createdPrompts,
     required this.upvotedPrompts,
     required this.downvotedPrompts,
+    required this.createdAt, // new field
   });
 
   factory UserModel.fromDocumentSnapshot(DocumentSnapshot doc) {
@@ -61,6 +65,7 @@ class UserModel {
       createdPrompts: List<String>.from(data['created_prompts']),
       upvotedPrompts: Map<String, Timestamp>.from(data['upvoted_prompts']),
       downvotedPrompts: Map<String, Timestamp>.from(data['downvoted_prompts']),
+      createdAt: data['created_at'], // new field assignment
     );
   }
 
@@ -74,6 +79,7 @@ class UserModel {
       'created_prompts': createdPrompts,
       'upvoted_prompts': upvotedPrompts,
       'downvoted_prompts': downvotedPrompts,
+      'created_at': createdAt, // new field
     };
   }
 }
@@ -93,21 +99,23 @@ class UserState {
     Map<String, Timestamp>? upvotedPrompts,
     Map<String, Timestamp>? downvotedPrompts,
     String? errorMessage,
+    Timestamp? createdAt,
   }) {
     return UserState(
       user: user == null
-          ? this.user
-          : this.user!.copyWith(
-                userId: userId,
-                username: username,
-                profilePic: profilePic,
-                description: description,
-                isRestricted: isRestricted,
-                favPrompts: favPrompts,
-                createdPrompts: createdPrompts,
-                upvotedPrompts: upvotedPrompts,
-                downvotedPrompts: downvotedPrompts,
-              ),
+          ? user
+          : user!.copyWith(
+              userId: userId,
+              username: username,
+              profilePic: profilePic,
+              description: description,
+              isRestricted: isRestricted,
+              favPrompts: favPrompts,
+              createdPrompts: createdPrompts,
+              upvotedPrompts: upvotedPrompts,
+              downvotedPrompts: downvotedPrompts,
+              createdAt: createdAt,
+            ),
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

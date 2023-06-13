@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_hooks/flutter_hooks.dart';
-// import 'package:fluro/fluro.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kaiprompt/config/routes.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -11,6 +11,8 @@ final logger = Logger();
 class ForgotPasswordScreen extends HookConsumerWidget {
   // Variables to hold user input
   final _emailController = TextEditingController();
+
+  ForgotPasswordScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,8 +42,9 @@ class ForgotPasswordScreen extends HookConsumerWidget {
               ElevatedButton(
                 child: Text("Reset Password"),
                 onPressed: () async {
-                  bool success =
-                      await auth.resetPassword(_emailController.text);
+                  bool success = await auth
+                      .resetPassword(_emailController.text)
+                      .then((value) => value.isSuccess);
                   if (success) {
                     logger.i("Password reset email sent");
                   } else {
@@ -55,14 +58,14 @@ class ForgotPasswordScreen extends HookConsumerWidget {
                 child: Text("Sign In"),
                 onPressed: () {
                   // Navigate to Sign In screen
-                  router.navigateTo(context, "/auth/login");
+                  context.go("/auth/login");
                 },
               ),
               TextButton(
                 child: Text("Sign Up"),
                 onPressed: () {
                   // Navigate to Sign Up screen
-                  router.navigateTo(context, "/auth/signup");
+                  context.go("/auth/signup");
                 },
               ),
             ],

@@ -10,13 +10,14 @@ import 'package:kaiprompt/screens/auth/login_screen.dart';
 import 'package:kaiprompt/screens/error/error_screen.dart';
 import 'firebase_options.dart';
 import 'config/routes.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  defineRoutes(router);
+  usePathUrlStrategy();
   runApp(
     ProviderScope(
       child: MyApp(),
@@ -25,15 +26,20 @@ void main() async {
 }
 
 class MyApp extends HookWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Kaiprompt',
+    return MaterialApp.router(
+      key: key,
+      title: 'kaiprompt',
+      routerConfig: router,
+      // routeInformationParser: router.parser,
+      // routerDelegate: router.de,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const HomeScreenWrapper(),
     );
   }
 }

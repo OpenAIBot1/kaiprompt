@@ -3,10 +3,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kaiprompt/models/user.dart';
 import 'package:kaiprompt/services/auth_service.dart';
 import 'package:kaiprompt/services/user_service.dart';
+import 'package:kaiprompt/utils/logger.dart';
 
 final userProvider = StateNotifierProvider<UserProvider, UserState>((ref) {
-  final authService = ref.read(authServiceProvider.notifier);
-  final userId = authService.getCurrentUser()?.uid ?? '';
+  final authService = ref.watch(authServiceProvider);
+  final userId = authService?.uid ?? '';
   return UserProvider(userId: userId);
 });
 

@@ -1,10 +1,10 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:logger/logger.dart';
+import 'package:kaiprompt/utils/logger.dart';
+import 'package:kaiprompt/utils/service_response.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-final logger = Logger();
 final _firestore = FirebaseFirestore.instance;
 final _usersCollection = _firestore.collection('users');
 final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -26,75 +26,72 @@ class AuthService extends StateNotifier<User?> {
     return state;
   }
 
-  Future<bool> signIn(String email, String password) async {
+  Future<ServiceResponse<bool>> signIn(String email, String password) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      return true;
+      return ServiceResponse(data: true);
     } catch (e) {
-      // TODO: handle exception
       logger.e(e);
-      return false;
+      return ServiceResponse(error: e.toString());
     }
   }
 
-  Future<void> signOut() async {
+  Future<ServiceResponse<void>> signOut() async {
     try {
       await _firebaseAuth.signOut();
+      return ServiceResponse(data: null);
     } catch (e) {
-      // TODO: handle exception
       logger.e(e);
+      return ServiceResponse(error: e.toString());
     }
   }
 
-  Future<bool> register(String email, String password) async {
+  Future<ServiceResponse<bool>> register(String email, String password) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // Check if the user is not null before accessing the uid
       if (userCredential.user != null) {
-        // Create a new user document in Firestore
         await _usersCollection.doc(userCredential.user!.uid).set({
-          'user_id': userCredential.user!.uid, // TODO: Set user ID
-          'username': '', // TODO: Set username
-          'profile_pic': '', // TODO: Set profile picture URL
-          'description': '', // TODO: Set description
-          'is_restricted': false, // TODO: Set restricted status
-          'fav_prompts': [], // TODO: Set favorite prompts
-          'created_prompts': [], // TODO: Set created prompts
-          'upvoted_prompts': {}, // TODO: Set upvoted prompts
-          'downvoted_prompts': {}, // TODO: Set downvoted prompts
+          'user_id': userCredential.user!.uid,
+          'created_at': FieldValue.serverTimestamp(),
+          'username': '',
+          'profile_pic': '',
+          'description': '',
+          'is_restricted': false,
+          'fav_prompts': [],
+          'created_prompts': [],
+          'upvoted_prompts': {},
+          'downvoted_prompts': {},
         });
-
-        return true;
+        return ServiceResponse(data: true);
       } else {
         logger.e('User is null after creating account');
-        return false;
+        return ServiceResponse(error: 'User is null after creating account');
       }
     } catch (e) {
-      // TODO: handle exception
       logger.e(e);
-      return false;
+      return ServiceResponse(error: e.toString());
     }
   }
 
-  Future<bool> resetPassword(String email) async {
+  Future<ServiceResponse<bool>> resetPassword(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
-      return true;
+      return ServiceResponse(data: true);
     } catch (e) {
-      // TODO: handle exception
       logger.e(e);
-      return false;
+      return ServiceResponse(error: e.toString());
     }
   }
 
-  Future<bool> signInWithGoogle() async {
+  Future<ServiceResponse<bool>> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
       if (googleUser == null) {
-        return false; // User aborted the sign-in process
+        return ServiceResponse(data: false);
       }
 
       final GoogleSignInAuthentication googleAuth =
@@ -105,11 +102,36 @@ class AuthService extends StateNotifier<User?> {
         idToken: googleAuth.idToken,
       );
 
-      await _firebaseAuth.signInWithCredential(credential);
-      return true;
+      final userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('user_id', isEqualTo: userCredential.user!.uid)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'user_id': userCredential.user!.uid,
+          'created_at': FieldValue.serverTimestamp(),
+          'username': '',
+          'profile_pic': '',
+          'description': '',
+          'is_restricted': false,
+          'fav_prompts': [],
+          'created_prompts': [],
+          'upvoted_prompts': {},
+          'downvoted_prompts': {},
+        });
+      }
+
+      return ServiceResponse(data: true);
     } catch (e) {
       logger.e(e);
-      return false;
+      return ServiceResponse(error: e.toString());
     }
   }
 }

@@ -5,7 +5,7 @@ import 'package:kaiprompt/utils/service_response.dart';
 
 class UserService {
   final CollectionReference _usersRef =
-      FirebaseFirestore.instance.collection('Users');
+      FirebaseFirestore.instance.collection('users');
 
   Future<ServiceResponse<UserModel>> getUser(String userId) async {
     try {

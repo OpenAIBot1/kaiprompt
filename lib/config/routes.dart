@@ -1,5 +1,5 @@
-import 'package:fluro/fluro.dart';
-// import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
 import 'package:kaiprompt/screens/auth/login_screen.dart';
 import 'package:kaiprompt/screens/auth/signup_screen.dart';
 import 'package:kaiprompt/screens/auth/forgot_password_screen.dart';
@@ -18,56 +18,103 @@ import 'package:kaiprompt/screens/contact/confirmation_screen.dart';
 import 'package:kaiprompt/screens/about/about_future_plans_screen.dart';
 import 'package:kaiprompt/screens/about/service_agreement_screen.dart';
 
-final router = FluroRouter();
+final router = GoRouter(
+    initialLocation: '/',
+    // Auth routes
+    routes: [
+      GoRoute(
+        path: "/auth/login",
+        pageBuilder: (context, state) => MaterialPage(child: LoginScreen()),
+      ),
+      GoRoute(
+        path: "/auth/signup",
+        pageBuilder: (context, state) => MaterialPage(child: SignupScreen()),
+      ),
+      GoRoute(
+        path: "/auth/forgot-password",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: ForgotPasswordScreen()),
+      ),
+      GoRoute(
+        path: "/auth/password-reset",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: PasswordResetScreen()),
+      ),
 
-void defineRoutes(FluroRouter router) {
-  // Auth routes
-  router.define("/auth/login",
-      handler: Handler(handlerFunc: (_, __) => LoginScreen()));
-  router.define("/auth/signup",
-      handler: Handler(handlerFunc: (_, __) => SignupScreen()));
-  router.define("/auth/forgot-password",
-      handler: Handler(handlerFunc: (_, __) => ForgotPasswordScreen()));
-  router.define("/auth/password-reset",
-      handler: Handler(handlerFunc: (_, __) => PasswordResetScreen()));
+      // Error routes
+      GoRoute(
+        path: "/error",
+        pageBuilder: (context, state) => MaterialPage(child: ErrorScreen()),
+      ),
 
-  // Error routes
-  router.define("/error",
-      handler: Handler(handlerFunc: (_, __) => ErrorScreen()));
+      // Home routes
+      GoRoute(
+        path: "/home/loading",
+        pageBuilder: (context, state) => MaterialPage(child: LoadingScreen()),
+      ),
+      GoRoute(
+        path: "/",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: CatalogueMainScreen()),
+      ),
 
-  // Home routes
-  router.define("/home/loading",
-      handler: Handler(handlerFunc: (_, __) => LoadingScreen()));
-  router.define("/home/catalogue",
-      handler: Handler(handlerFunc: (_, __) => CatalogueMainScreen()));
+      // Profile routes
+      GoRoute(
+        path: "/profile/view",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: ProfileViewScreen()),
+      ),
 
-  // Profile routes
-  router.define("/profile/view",
-      handler: Handler(handlerFunc: (_, __) => ProfileViewScreen()));
+      // Prompt routes
+      GoRoute(
+        path: "/prompt/details",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: PromptDetailsScreen()),
+      ),
+      GoRoute(
+        path: "/prompt/main-editing",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: PromptMainEditingScreen()),
+      ),
+      GoRoute(
+        path: "/prompt/publishing",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: PromptPublishingScreen()),
+      ),
 
-  // Prompt routes
-  router.define("/prompt/details",
-      handler: Handler(handlerFunc: (_, __) => PromptDetailsScreen()));
-  router.define("/prompt/main-editing",
-      handler: Handler(handlerFunc: (_, __) => PromptMainEditingScreen()));
-  router.define("/prompt/publishing",
-      handler: Handler(handlerFunc: (_, __) => PromptPublishingScreen()));
+      // Support routes
+      GoRoute(
+        path: "/support/main",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: SupportMainScreen()),
+      ),
+      GoRoute(
+        path: "/support/contributors",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: ContributorsScreen()),
+      ),
 
-  // Support routes
-  router.define("/support/main",
-      handler: Handler(handlerFunc: (_, __) => SupportMainScreen()));
-  router.define("/support/contributors",
-      handler: Handler(handlerFunc: (_, __) => ContributorsScreen()));
+      // Contact routes
+      GoRoute(
+        path: "/contact/form",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: ContactFormScreen()),
+      ),
+      GoRoute(
+        path: "/contact/confirmation",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: ConfirmationScreen()),
+      ),
 
-  // Contact routes
-  router.define("/contact/form",
-      handler: Handler(handlerFunc: (_, __) => ContactFormScreen()));
-  router.define("/contact/confirmation",
-      handler: Handler(handlerFunc: (_, __) => ConfirmationScreen()));
-
-  // About routes
-  router.define("/about/future-plans",
-      handler: Handler(handlerFunc: (_, __) => AboutFuturePlansScreen()));
-  router.define("/about/service-agreement",
-      handler: Handler(handlerFunc: (_, __) => ServiceAgreementScreen()));
-}
+      // About routes
+      GoRoute(
+        path: "/about/future-plans",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: AboutFuturePlansScreen()),
+      ),
+      GoRoute(
+        path: "/about/service-agreement",
+        pageBuilder: (context, state) =>
+            MaterialPage(child: ServiceAgreementScreen()),
+      ),
+    ]);
