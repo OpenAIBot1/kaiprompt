@@ -1,14 +1,13 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:logger/logger.dart';
+import 'package:kaiprompt/utils/logger.dart';
 import 'package:kaiprompt/models/prompt.dart';
+import 'package:kaiprompt/utils/service_response.dart';
 
-final logger = Logger();
 final _firestore = FirebaseFirestore.instance;
 final _promptsCollection = _firestore.collection('prompts');
 final _usersCollection = _firestore.collection('users');
-final _versionsCollection = _firestore.collection('versions');
 
 final promptServiceProvider =
     StateNotifierProvider<PromptService, PromptModel?>(
@@ -16,15 +15,59 @@ final promptServiceProvider =
 
 class PromptService extends StateNotifier<PromptModel?> {
   final FirebaseAuth _firebaseAuth;
+  DocumentSnapshot? _lastDocument;
 
   PromptService(this._firebaseAuth) : super(null);
 
-  PromptModel? getCurrentPrompt() {
-    // Get the current prompt
-    return state;
+// Fetch prompts with pagination, ordering, and filtering
+  Future<ServiceResponse<List<PromptModel>>> fetchPrompts({
+    int batch = 10,
+    String orderBy = 'created_at',
+    bool descending = true,
+    Map<String, dynamic>? filters,
+  }) async {
+    try {
+      Query query = _promptsCollection
+          .orderBy(orderBy, descending: descending)
+          .limit(batch);
+
+      // If we have a last document from the previous batch,
+      // start the query after it
+      if (_lastDocument != null) {
+        query = query.startAfterDocument(_lastDocument!);
+      }
+
+      // Apply filters to the query
+      if (filters != null) {
+        filters.forEach((field, value) {
+          query = query.where(field, isEqualTo: value);
+        });
+      }
+
+      QuerySnapshot querySnapshot = await query.get();
+
+      // If no documents are fetched, we have reached the end
+      if (querySnapshot.docs.isEmpty) {
+        throw Exception('No more prompts to fetch.');
+      }
+
+      // If we have fetched any documents, store the last one
+      // for the next batch
+      _lastDocument = querySnapshot.docs.last;
+
+      // Map the documents to PromptModel instances
+      List<PromptModel> prompts = querySnapshot.docs.map((doc) {
+        return PromptModel.fromDocument(doc);
+      }).toList();
+
+      return ServiceResponse<List<PromptModel>>(data: prompts);
+    } catch (e) {
+      logger.e(e);
+      return ServiceResponse<List<PromptModel>>(error: e.toString());
+    }
   }
 
-  Future<bool> createPrompt(String title,
+  Future<ServiceResponse<bool>> createPrompt(String title,
       {bool isRemixing = false, String? basePrompt}) async {
     try {
       // Create a new prompt
@@ -59,28 +102,28 @@ class PromptService extends StateNotifier<PromptModel?> {
       }
 
       await _promptsCollection.doc(promptId).set(promptData);
-      return true;
+      return ServiceResponse<bool>(data: true);
     } catch (e) {
       logger.e(e);
-      return false;
+      return ServiceResponse<bool>(error: e.toString());
     }
   }
 
-  Future<bool> editPrompt(
+  Future<ServiceResponse<bool>> editPrompt(
       String promptId, String title, List<String> tags) async {
     try {
       // Edit an existing prompt
       await _promptsCollection
           .doc(promptId)
           .update({'title': title, 'tags': tags});
-      return true;
+      return ServiceResponse<bool>(data: true);
     } catch (e) {
       logger.e(e);
-      return false;
+      return ServiceResponse<bool>(error: e.toString());
     }
   }
 
-  Future<bool> publishPrompt(String promptId) async {
+  Future<ServiceResponse<bool>> publishPrompt(String promptId) async {
     try {
       String? userId = _firebaseAuth.currentUser?.uid;
       DocumentSnapshot promptSnapshot =
@@ -90,17 +133,19 @@ class PromptService extends StateNotifier<PromptModel?> {
 
       if (promptData != null && promptData['created_by'] == userId) {
         await _promptsCollection.doc(promptId).update({'is_published': true});
-        return true;
+        return ServiceResponse<bool>(data: true);
       } else {
-        return false; // Not the creator of the prompt
+        return ServiceResponse<bool>(
+            error:
+                "Not the creator of the prompt"); // Not the creator of the prompt
       }
     } catch (e) {
       logger.e(e);
-      return false;
+      return ServiceResponse<bool>(error: e.toString());
     }
   }
 
-  Future<bool> unpublishPrompt(String promptId) async {
+  Future<ServiceResponse<bool>> unpublishPrompt(String promptId) async {
     try {
       String? userId = _firebaseAuth.currentUser?.uid;
       DocumentSnapshot promptSnapshot =
@@ -110,55 +155,57 @@ class PromptService extends StateNotifier<PromptModel?> {
 
       if (promptData != null && promptData['created_by'] == userId) {
         await _promptsCollection.doc(promptId).update({'is_published': false});
-        return true;
+        return ServiceResponse<bool>(data: true);
       } else {
-        return false; // Not the creator of the prompt
+        return ServiceResponse<bool>(
+            error:
+                'Not the creator of the prompt'); // Not the creator of the prompt
       }
     } catch (e) {
       logger.e(e);
-      return false;
+      return ServiceResponse<bool>(error: e.toString());
     }
   }
 
-  Future<bool> upvotePrompt(String promptId) async {
+  Future<ServiceResponse<bool>> onUpvotePrompt(String promptId) async {
     try {
       // Upvote a prompt
       String? userId = _firebaseAuth.currentUser?.uid;
       await _promptsCollection
           .doc(promptId)
           .update({'upvotes.$userId': FieldValue.serverTimestamp()});
-      return true;
+      return ServiceResponse<bool>(data: true);
     } catch (e) {
       logger.e(e);
-      return false;
+      return ServiceResponse<bool>(error: e.toString());
     }
   }
 
-  Future<bool> downvotePrompt(String promptId) async {
+  Future<ServiceResponse<bool>> onDownvotePrompt(String promptId) async {
     try {
       // Downvote a prompt
       String? userId = _firebaseAuth.currentUser?.uid;
       await _promptsCollection
           .doc(promptId)
           .update({'downvotes.$userId': FieldValue.serverTimestamp()});
-      return true;
+      return ServiceResponse<bool>(data: true);
     } catch (e) {
       logger.e(e);
-      return false;
+      return ServiceResponse<bool>(error: e.toString());
     }
   }
 
-  Future<bool> savePrompt(String promptId) async {
+  Future<ServiceResponse<bool>> onSavePrompt(String promptId) async {
     try {
       // Save a prompt
       String? userId = _firebaseAuth.currentUser?.uid;
       await _usersCollection.doc(userId).update({
         'fav_prompts': FieldValue.arrayUnion([promptId])
       });
-      return true;
+      return ServiceResponse<bool>(data: true);
     } catch (e) {
       logger.e(e);
-      return false;
+      return ServiceResponse<bool>(error: e.toString());
     }
   }
 

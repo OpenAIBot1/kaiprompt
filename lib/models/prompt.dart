@@ -9,9 +9,10 @@ class PromptModel {
   final bool isPublished;
   final String createdBy;
   final List<String> versions;
-  final Map<String, Timestamp> upvotes;
-  final Map<String, Timestamp> downvotes;
-  final Map<String, Timestamp> favs;
+  final int upvotesCnt;
+  final int downvotesCnt;
+  final int favoritesCnt;
+  final Timestamp createdAt;
 
   PromptModel copyWith({
     String? promptId,
@@ -20,9 +21,10 @@ class PromptModel {
     bool? isPublished,
     String? createdBy,
     List<String>? versions,
-    Map<String, Timestamp>? upvotes,
-    Map<String, Timestamp>? downvotes,
-    Map<String, Timestamp>? favs,
+    int? upvotesCnt,
+    int? downvotesCnt,
+    int? favoritesCnt,
+    Timestamp? createdAt,
   }) {
     return PromptModel(
       promptId: promptId ?? this.promptId,
@@ -31,9 +33,10 @@ class PromptModel {
       isPublished: isPublished ?? this.isPublished,
       createdBy: createdBy ?? this.createdBy,
       versions: versions ?? this.versions,
-      upvotes: upvotes ?? this.upvotes,
-      downvotes: downvotes ?? this.downvotes,
-      favs: favs ?? this.favs,
+      upvotesCnt: upvotesCnt ?? this.upvotesCnt,
+      downvotesCnt: downvotesCnt ?? this.downvotesCnt,
+      favoritesCnt: favoritesCnt ?? this.favoritesCnt,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -44,12 +47,13 @@ class PromptModel {
     required this.isPublished,
     required this.createdBy,
     required this.versions,
-    required this.upvotes,
-    required this.downvotes,
-    required this.favs,
+    required this.upvotesCnt,
+    required this.downvotesCnt,
+    required this.favoritesCnt,
+    required this.createdAt,
   });
 
-  factory PromptModel.fromDocumentSnapshot(DocumentSnapshot doc) {
+  factory PromptModel.fromDocument(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return PromptModel(
       promptId: doc.id,
@@ -58,9 +62,10 @@ class PromptModel {
       isPublished: data['is_published'],
       createdBy: data['created_by'],
       versions: List<String>.from(data['versions']),
-      upvotes: Map<String, Timestamp>.from(data['upvotes']),
-      downvotes: Map<String, Timestamp>.from(data['downvotes']),
-      favs: Map<String, Timestamp>.from(data['favs']),
+      upvotesCnt: data['upvotes_cnt'],
+      downvotesCnt: data['downvotes_cnt'],
+      favoritesCnt: data['favorites_cnt'],
+      createdAt: data['created_at'],
     );
   }
 
@@ -71,9 +76,10 @@ class PromptModel {
       'is_published': isPublished,
       'created_by': createdBy,
       'versions': versions,
-      'upvotes': upvotes,
-      'downvotes': downvotes,
-      'favs': favs,
+      'upvotes_cnt': upvotesCnt,
+      'downvotes_cnt': downvotesCnt,
+      'favorites_cnt': favoritesCnt,
+      'created_at': createdAt,
     };
   }
 }
